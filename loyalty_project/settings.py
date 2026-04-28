@@ -150,3 +150,13 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/staff/"
 LOGOUT_REDIRECT_URL = "/"
+
+
+
+
+if os.getenv("CREATE_SUPERUSER") == "True":
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+
+    if not User.objects.filter(username="choo").exists():
+        User.objects.create_superuser("choo", "", "12345678")
