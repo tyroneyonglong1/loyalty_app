@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Detail</title>
+</head>
+<body>
+    <h2>Customer: {{ customer.phone }}</h2>
+
+    <p>Name: {{ customer.name }}</p>
+    <p>Current Balance: {{ balance }} / 10</p>
+    <p>Free Available: {{ free_available }}</p>
+
+    {% if free_available > 0 %}
+        <form method="post" action="{% url 'redeem' customer.id %}">
+            {% csrf_token %}
+            <button type="submit">Redeem Free 1</button>
+        </form>
+    {% endif %}
+
+    <br>
+    <a href="/">Add More Purchase</a>
+
+    <h3>Purchase History</h3>
+    <ul>
+        {% for p in purchases %}
+            <li>{{ p.created_at }} - Bought {{ p.quantity }} - {{ p.staff_name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Redeem History</h3>
+    <ul>
+        {% for r in rewards %}
+            <li>{{ r.redeemed_at }} - Redeemed {{ r.quantity }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

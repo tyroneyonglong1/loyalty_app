@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loyalty App</title>
+</head>
+<body>
+    <h2>Buy 10 Free 1 Loyalty App</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Customer HP Number</label><br>
+        <input name="phone" required><br><br>
+
+        <label>Customer Name</label><br>
+        <input name="name"><br><br>
+
+        <label>Quantity Bought</label><br>
+        <input name="quantity" type="number" min="1" required><br><br>
+
+        <label>Staff Name</label><br>
+        <input name="staff_name"><br><br>
+
+        <button type="submit">Save Purchase</button>
+    </form>
+</body>
+</html>
