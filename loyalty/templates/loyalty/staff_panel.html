@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #ecfdf3; color: #064e3b; }
+        .container { max-width: 480px; margin: auto; min-height: 100vh; background: #f8fffb; }
+        .header { padding: 24px 22px; background: linear-gradient(135deg,#007a3d,#064e3b); color: white; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px; }
+        .back { color: white; text-decoration: none; font-size: 15px; display: inline-block; margin-bottom: 14px; }
+        .title { font-size: 24px; font-weight: bold; }
+        .card { margin: 18px; padding: 18px; background: white; border-radius: 18px; box-shadow: 0 8px 24px rgba(0,80,40,.08); border: 1px solid #d1fae5; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; }
+        input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 16px; }
+        .button { width: 100%; padding: 16px; background: linear-gradient(135deg,#059669,#047857); color: white; border: none; border-radius: 14px; font-size: 18px; font-weight: bold; margin-top: 14px; }
+        .redeem { background: linear-gradient(135deg,#f59e0b,#d97706); }
+        .info { font-size: 16px; line-height: 1.8; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <a class="back" href="{% url 'customer_detail' customer.id %}">← Back to Customer</a>
+        <div class="title">Staff Panel</div>
+        <div>Logged in as: {{ user.username }}</div>
+    </div>
+
+    <div class="card info">
+        <strong>Customer:</strong> {{ customer.phone }}<br>
+        <strong>Name:</strong> {{ customer.name|default:"-" }}<br>
+        <strong>Balance:</strong> {{ balance }} / 10<br>
+        <strong>Free Available:</strong> {{ free_available }}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="card">
+            <label>Quantity Purchased</label>
+            <input name="quantity" type="number" min="1" required placeholder="Enter quantity">
+            <button class="button" type="submit">Add Purchase</button>
+        </div>
+    </form>
+
+    {% if free_available > 0 %}
+        <form method="post" action="{% url 'redeem' customer.id %}">
+            {% csrf_token %}
+            <div class="card">
+                <button class="button redeem" type="submit">Redeem Free 1</button>
+            </div>
+        </form>
+    {% endif %}
+
+    <div class="card">
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+
+</div>
+</body>
+</html>
