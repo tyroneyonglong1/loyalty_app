@@ -2,36 +2,233 @@
 <html>
 <head>
     <title>Customer Detail</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #ecfdf3;
+            color: #064e3b;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: auto;
+            min-height: 100vh;
+            background: #f8fffb;
+        }
+
+        .header {
+            padding: 24px 22px;
+            background: linear-gradient(135deg, #007a3d, #064e3b);
+            color: white;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            display: inline-block;
+            margin-bottom: 14px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .card {
+            margin: 18px;
+            padding: 18px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0, 80, 40, 0.08);
+            border: 1px solid #d1fae5;
+        }
+
+        .center { text-align: center; }
+
+        .phone {
+            font-size: 24px;
+            font-weight: bold;
+            color: #064e3b;
+        }
+
+        .name {
+            margin-top: 8px;
+            color: #475569;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .box {
+            background: #ecfdf3;
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #bbf7d0;
+            text-align: center;
+        }
+
+        .box-title {
+            font-size: 13px;
+            color: #047857;
+            font-weight: bold;
+        }
+
+        .box-value {
+            margin-top: 8px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .button {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            padding: 16px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: bold;
+            border: none;
+            width: 100%;
+        }
+
+        .redeem {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            cursor: pointer;
+        }
+
+        h3 {
+            margin: 0 0 14px 0;
+            color: #065f46;
+        }
+
+        .item {
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            background: #ffffff;
+        }
+
+        .item-date {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .item-main {
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .empty {
+            padding: 20px;
+            background: #f1f5f9;
+            color: #64748b;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 28px;
+            padding: 22px;
+            text-align: center;
+            background: #064e3b;
+            color: white;
+            font-size: 14px;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+    </style>
 </head>
+
 <body>
-    <h2>Customer: {{ customer.phone }}</h2>
+<div class="container">
 
-    <p>Name: {{ customer.name }}</p>
-    <p>Current Balance: {{ balance }} / 10</p>
-    <p>Free Available: {{ free_available }}</p>
+    <div class="header">
+        <a class="back" href="/">← Add More Purchase</a>
+        <div class="title">Customer Details</div>
+    </div>
 
-    {% if free_available > 0 %}
-        <form method="post" action="{% url 'redeem' customer.id %}">
-            {% csrf_token %}
-            <button type="submit">Redeem Free 1</button>
-        </form>
-    {% endif %}
+    <div class="card center">
+        <div class="phone">{{ customer.phone }}</div>
+        <div class="name">Name: {{ customer.name|default:"-" }}</div>
 
-    <br>
-    <a href="/">Add More Purchase</a>
+        <div class="grid">
+            <div class="box">
+                <div class="box-title">Current Balance</div>
+                <div class="box-value">{{ balance }} / 10</div>
+            </div>
 
-    <h3>Purchase History</h3>
-    <ul>
+            <div class="box">
+                <div class="box-title">Free Available</div>
+                <div class="box-value">{{ free_available }}</div>
+            </div>
+        </div>
+
+        {% if free_available > 0 %}
+            <form method="post" action="{% url 'redeem' customer.id %}">
+                {% csrf_token %}
+                <button class="button redeem" type="submit">Redeem Free 1</button>
+            </form>
+        {% endif %}
+
+        <a class="button" href="/">Add More Purchase</a>
+    </div>
+
+    <div class="card">
+        <h3>Purchase History</h3>
+
         {% for p in purchases %}
-            <li>{{ p.created_at }} - Bought {{ p.quantity }} - {{ p.staff_name }}</li>
+            <div class="item">
+                <div class="item-date">{{ p.created_at }}</div>
+                <div class="item-main">
+                    <span>Bought {{ p.quantity }}</span>
+                    <span>{{ p.staff_name }}</span>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty">No purchase yet.</div>
         {% endfor %}
-    </ul>
+    </div>
 
-    <h3>Redeem History</h3>
-    <ul>
+    <div class="card">
+        <h3>Redeem History</h3>
+
         {% for r in rewards %}
-            <li>{{ r.redeemed_at }} - Redeemed {{ r.quantity }}</li>
+            <div class="item">
+                <div class="item-date">{{ r.redeemed_at }}</div>
+                <div class="item-main">
+                    <span>Redeemed {{ r.quantity }}</span>
+                    <span>Free item</span>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty">No redemption yet.</div>
         {% endfor %}
-    </ul>
+    </div>
+
+    <div class="footer">
+        Pop Pop Solution<br>
+        Buy 10 Free 1 Loyalty<br>
+        © 2026 Pop Pop Solution
+    </div>
+
+</div>
 </body>
 </html>

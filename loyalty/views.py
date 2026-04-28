@@ -1,24 +1,35 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Customer, Purchase, RewardRedemption
 
 
-def home(request):
-    customer = None
+def customer_lookup(request):
+    phone = request.GET.get("phone", "").strip()
+    customer = Customer.objects.filter(phone=phone).first()
 
+    if customer:
+        return JsonResponse({
+            "exists": True,
+            "name": customer.name,
+        })
+
+    return JsonResponse({"exists": False})
+
+
+def home(request):
     if request.method == "POST":
         phone = request.POST.get("phone", "").strip()
         name = request.POST.get("name", "").strip()
         qty = int(request.POST.get("quantity", "0"))
         staff = request.POST.get("staff_name", "").strip()
 
-        customer, created = Customer.objects.get_or_create(
-            phone=phone,
-            defaults={"name": name}
-        )
+        customer = Customer.objects.filter(phone=phone).first()
 
-        if name and not customer.name:
-            customer.name = name
-            customer.save()
+        if customer:
+            # existing customer: do not allow name change
+            pass
+        else:
+            customer = Customer.objects.create(phone=phone, name=name)
 
         if qty > 0:
             Purchase.objects.create(
@@ -29,7 +40,7 @@ def home(request):
 
         return redirect("customer_detail", customer_id=customer.id)
 
-    return render(request, "loyalty/home.html", {"customer": customer})
+    return render(request, "loyalty/home.html")
 
 
 def customer_detail(request, customer_id):
