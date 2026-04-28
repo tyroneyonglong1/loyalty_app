@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Customer, Purchase, RewardRedemption
@@ -42,6 +43,26 @@ def customer_detail(request, customer_id):
         "free_available": customer.free_available(),
         "purchases": customer.purchases.order_by("-created_at"),
         "rewards": customer.rewards.order_by("-redeemed_at"),
+    })
+
+
+@login_required
+def staff_dashboard(request):
+    q = request.GET.get("q", "").strip()
+
+    customers = Customer.objects.all().order_by("-created_at")
+
+    if q:
+        customers = customers.filter(
+            Q(phone__icontains=q) |
+            Q(name__icontains=q)
+        )
+
+    customers = customers[:50]
+
+    return render(request, "loyalty/staff_dashboard.html", {
+        "customers": customers,
+        "q": q,
     })
 
 

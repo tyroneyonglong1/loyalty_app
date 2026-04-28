@@ -7,6 +7,8 @@ urlpatterns = [
     path("lookup/", views.customer_lookup, name="customer_lookup"),
 
     path("customer/<int:customer_id>/", views.customer_detail, name="customer_detail"),
+
+    path("staff/", views.staff_dashboard, name="staff_dashboard"),
     path("staff/customer/<int:customer_id>/", views.staff_panel, name="staff_panel"),
     path("customer/<int:customer_id>/redeem/", views.redeem, name="redeem"),
 

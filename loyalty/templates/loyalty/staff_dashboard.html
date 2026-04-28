@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #ecfdf3;
+            color: #064e3b;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: auto;
+            min-height: 100vh;
+            background: #f8fffb;
+        }
+
+        .header {
+            padding: 24px 22px;
+            background: linear-gradient(135deg, #007a3d, #064e3b);
+            color: white;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .small {
+            margin-top: 6px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .card {
+            margin: 18px;
+            padding: 18px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0, 80, 40, 0.08);
+            border: 1px solid #d1fae5;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px #d1fae5;
+            outline: none;
+        }
+
+        .button {
+            width: 100%;
+            margin-top: 12px;
+            padding: 14px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .customer {
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            background: #ffffff;
+        }
+
+        .phone {
+            font-size: 18px;
+            font-weight: bold;
+            color: #064e3b;
+        }
+
+        .name {
+            margin-top: 5px;
+            color: #475569;
+        }
+
+        .meta {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .secondary {
+            background: linear-gradient(135deg, #0f766e, #115e59);
+        }
+
+        .empty {
+            padding: 18px;
+            background: #f1f5f9;
+            color: #64748b;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .top-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+        }
+
+        .top-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        <div class="title">Staff Dashboard</div>
+        <div class="small">Logged in as: {{ user.username }}</div>
+
+        <div class="top-links">
+            <a href="/">Customer Page</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <form method="get">
+            <input
+                name="q"
+                value="{{ q }}"
+                placeholder="Search phone or customer name"
+                autocomplete="off"
+            >
+            <button class="button" type="submit">Search Customer</button>
+        </form>
+    </div>
+
+    <div class="card">
+        {% if q %}
+            <h3>Search Result</h3>
+        {% else %}
+            <h3>Latest Customers</h3>
+        {% endif %}
+
+        {% for customer in customers %}
+            <div class="customer">
+                <div class="phone">{{ customer.phone }}</div>
+                <div class="name">{{ customer.name|default:"No name" }}</div>
+                <div class="meta">
+                    Balance: {{ customer.total_active_qty }} / 10 |
+                    Free: {{ customer.free_available }}
+                </div>
+
+                <div class="actions">
+                    <a class="button secondary" href="{% url 'customer_detail' customer.id %}">
+                        View
+                    </a>
+                    <a class="button" href="{% url 'staff_panel' customer.id %}">
+                        Add / Redeem
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty">
+                No customer found.
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+</body>
+</html>
